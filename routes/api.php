@@ -25,7 +25,7 @@ Route::group(['middleware'=>['auth:sanctum']], function() {
     Route::get('admin', [AdminController::class, 'index'])->name('index'); 
     Route::post('admin', [AdminController::class, 'store'])->name('store');
     Route::get('admin/{id}', [AdminController::class, 'show'])->name('show');
-    Route::put('admin/{id}', [AdminController::class, 'update'])->name('update');
+    Route::post('admin/{id}', [AdminController::class, 'update'])->name('update');
     Route::delete('admin/{id}', [AdminController::class, 'destroy'])->name('destroy');
     Route::post('import', [AdminController::class, 'importExcel'])->name('importExcel');
     Route::get('export', [AdminController::class, 'exportExcel'])->name('exportExcel');

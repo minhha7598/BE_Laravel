@@ -9,7 +9,6 @@ use App\Models\NhanVien;
 use Illuminate\Http\Request;
 use App\Http\Resources\NhanVienResource;
 use App\Http\Requests\StoreNhanVienRequest;
-use App\Http\Requests\UpdateNhanVienRequest;
 use App\Http\Requests\ExcelNhanVienRequest;
 use Excel;
 use App\Exports\NhanVienExport;
@@ -91,7 +90,7 @@ class AdminController extends Controller
      * @param  \App\Models\NhanVien  $nhanVien
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateNhanVienRequest $request, NhanVien $id)
+    public function update(StoreNhanVienRequest $request, NhanVien $id)
     {
         try{
             $new = NhanVien::all()->find($id);
@@ -108,7 +107,6 @@ class AdminController extends Controller
             $request->ten_chuc_vu ? $new->ten_chuc_vu = $request->ten_chuc_vu :false;
             $request->he_so_luong ? $new->he_so_luong = $request->he_so_luong :false;
             $request->luong_co_ban ? $new->luong_co_ban = $request->luong_co_ban :false;
-
             //IMG
             $file_img = $request->ten_anh;
             $name_img  = optional($file_img)->getClientOriginalName();  
@@ -118,10 +116,16 @@ class AdminController extends Controller
             }
             
             //UPDATE
-            $new->save();
-            return response()->json([
-                'message' => "Succesfully Update!"
-            ],200);
+            if(!$request->ho_ten && !$request->ngay_sinh && !$request->gioi_tinh && !$request->dan_toc && !$request->so_dien_thoai && !$request->que_quan && !$request->dia_chi && !$request->truong && !$request->chuyen_nganh && !$request->trinh_do_hoc_van && !$request->ten_chuc_vu && !$request->he_so_luong && !$request->luong_co_ban && !$request->ten_anh){
+                return response()->json([
+                    'message' => "Nothing to update!"
+                ],200);
+            }else{
+                $new->save();
+                return response()->json([
+                    'message' => "Succesfully Update!"
+                ],404);
+            }
         }catch (Exception $e) {
             return response()->json([
                 'message' => "Failed Update!", $e
@@ -147,9 +151,9 @@ class AdminController extends Controller
 
     //EXCEL
     public function importExcel(ExcelNhanVienRequest $request){
-    Excel::import(new NhanVienImport, $request->file('file'));
-    return response([
-        'message'=>'Imported Successfully!'
+        Excel::import(new NhanVienImport, $request->file('file'));
+        return response([
+            'message'=>'Imported Successfully!'
         ]); 
     }
 
